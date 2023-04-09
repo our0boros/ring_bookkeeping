@@ -1,8 +1,11 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:ring_bookkeeping/theme.dart';
+
+
 import 'package:toast/toast.dart';
 import 'package:flutter/material.dart';
-
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+//主题
+import 'package:ring_bookkeeping/theme.dart';
+//页面
 import 'package:ring_bookkeeping/pages/home_page.dart';
 import 'package:ring_bookkeeping/pages/settings_page.dart';
 import 'package:ring_bookkeeping/pages/analysis_page.dart';
@@ -53,25 +56,6 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
               //Handle button tap
             },
           )
-
-          // BottomNavigationBar(
-          //   currentIndex: _currentIndex,
-          //   onTap: onTabTapped,
-          //   items: const [
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.note_add_rounded),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.settings),
-          //       label: '',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.analytics),
-          //       label: '',
-          //     ),
-          //   ],
-          // ),
         ),
 
         onWillPop: () async {

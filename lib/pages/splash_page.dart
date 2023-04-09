@@ -36,7 +36,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin{
     controller.repeat(reverse: true);
     timer = Timer(Duration(seconds: _welcomeSkipper), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (BuildContext context) => BottomNavigationBarWidget()));
+          builder: (BuildContext context) => const BottomNavigationBarWidget()));
     });
   }
 
