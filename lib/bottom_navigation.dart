@@ -46,6 +46,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
           ),
           bottomNavigationBar: CurvedNavigationBar(
             backgroundColor: darkTheme.backgroundColor,
+            // backgroundColor: Color.fromRGBO(0, 0, 0, 0),
             items: const <Widget> [
               Icon(Icons.note_add_rounded, size: 30),
               Icon(Icons.settings, size: 30),

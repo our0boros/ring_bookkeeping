@@ -98,5 +98,9 @@ flutter:
       fonts:
         - asset: fonts/Talk_Comic.ttf
           weight: 500
+    - family: BruceForeverRegular
+      fonts:
+        - asset: fonts/BruceForeverRegular.ttf
+          weight: 500
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
