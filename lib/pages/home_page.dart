@@ -22,16 +22,18 @@ class _HomePageState extends State<HomePage> {
 
   bool isDarkMode = true;
   final DBHelper _dbHelper = DBHelper();
-  late Database _database;
 
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
     getPrefsSettings();
-    _entryList = await _dbHelper.query();
-    debugPrint("[HOME] current entry list length: ${_entryList.length}");
-  }
 
+    Future.delayed(Duration.zero, () async {
+      _entryList = await _dbHelper.query();
+      // _dbHelper.insert(Node(title: "CASH", tag: "CASH", amount: 320, date: DateTime.now(), currency: "CNY"));
+      debugPrint("[HOME] current entry list length: ${_entryList.length}");
+    });
+  }
 
   void getPrefsSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,8 +48,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double recordWidth = MediaQuery.of(context).size.width * 0.75;
-    final double screenHeight = MediaQuery.of(context).size.height * 0.26;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     /// 每次刷新都更新一次资料库，可能会造成卡顿，测试使用
     // setState(() {
     //   _dbHelper.query().then((value) => _entryList = value);
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            height: screenHeight,
+            height: screenHeight * 0.26,
             decoration: BoxDecoration(
               color: isDarkMode ? darkTheme.subBackgroundColor : lightTheme.subBackgroundColor,
               borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(24), bottomRight: Radius.circular(24)),
@@ -74,28 +76,58 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Container(
+            height: screenHeight * 0.74,
             color: isDarkMode ? darkTheme.backgroundColor : lightTheme.backgroundColor,
-            child: ListView.builder(
-              itemCount: _entryList.length,
-              itemBuilder: (BuildContext context, int index) {
-                if (_entryList.isEmpty) {
-                  return Placeholder();
-                } else {
-                  return SizedBox(
-                    height: 300,
-                    child: ListView(
-                      children: [
-                        Text(_entryList[index].title),
-                        Text(_entryList[index].currency),
-                        Text(_entryList[index].tag),
-                        Text(_entryList[index].amount.toString()),
-                        Text(_entryList[index].date.toString()),
-                      ],
-                    ),
+            child: FutureBuilder<List<Node>> (
+              future: _dbHelper.query(),
+              builder: (context, snapshot) {
+
+                if (snapshot.hasData) {
+                  final data = snapshot.data;
+                  return ListView.builder(
+                      itemCount: data?.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        debugPrint("[HOME] ===================[ $index ]================");
+                        debugPrint("[HOME] node-tile ${data?[index].title}");
+                        debugPrint("[HOME] node-currency ${data?[index].currency}");
+                        debugPrint("[HOME] node-tag ${data?[index].tag}");
+                        debugPrint("[HOME] node-amount ${data?[index].amount.toString()}");
+                        debugPrint("[HOME] node-date ${data?[index].date.toString()}");
+                        return Container(
+                          width: screenWidth * 0.75,
+                          height: 50,
+                          // color: Colors.black,
+                          margin: EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(data![index].title),
+                              Text(data[index].currency),
+                              Text(data[index].tag),
+                              Text(data[index].amount.toString()),
+                              Text(data[index].date.toString()),
+                            ],
+                          ),
+
+                        );
+
+                      }
                   );
+                } else {
+                  return Center(
+                    child: SizedBox(
+                      width: screenWidth * 0.25,
+                      height: screenWidth * 0.25,
+                      child: CircularProgressIndicator(
+                        color: isDarkMode ? darkTheme.mainTextColor : lightTheme.mainTextColor,
+                        strokeWidth: 30,
+                      ),),);
                 }
-              }
-            ),
+              },
+            )
+
+
+
           )
         ],
       ),
