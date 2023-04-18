@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ring_bookkeeping/theme.dart';
+import 'package:ring_bookkeeping/appThemes.dart';
 
 class DataAnalysis extends StatefulWidget {
   const DataAnalysis({super.key});

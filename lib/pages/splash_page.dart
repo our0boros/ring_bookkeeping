@@ -4,8 +4,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:ring_bookkeeping/theme.dart';
-import 'package:ring_bookkeeping/bottom_navigation.dart';
+import 'package:ring_bookkeeping/appThemes.dart';
+import 'package:ring_bookkeeping/main_navigation.dart';
+
+
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -16,28 +18,62 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin{
   // 加载时长默认
-  int _welcomeSkipper = 3;
+  final int _welcomeSkipper = 3;
   //  环 加载条
   late AnimationController controller;
-  bool determinate = false;
+  late Animation<double> animation;
+
+  final String logoName = 'assets/images/RING.png';
+  final String logoDarkName = 'assets/images/RING-dark.png';
+
   //  计时器
   late Timer timer;
+  // 主题模式
+  bool isDarkMode = true;
+  bool skipSplash = true;
+
+  void getPrefsSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool("isDarkMode") == null) {
+      prefs.setBool("isDarkMode", false);
+    }
+    if (prefs.getBool("skipSplash") == null) {
+      prefs.setBool("skipSplash", true);
+    }
+
+    setState(() {
+      isDarkMode = prefs.getBool("isDarkMode")!;
+      skipSplash = prefs.getBool("skipSplash")!;
+    });
+  }
+
 
   @override
   void initState() {
     super.initState();
-    _loadCounter();
+    // 主题模式获取
+    getPrefsSettings();
+    // 动画控制
     controller = AnimationController(
         vsync: this,
-        duration: Duration(seconds: _welcomeSkipper),
+        duration: const Duration(milliseconds: 2100),
     )..addListener(() {
       setState(() {});
     });
     controller.repeat(reverse: true);
-    timer = Timer(Duration(seconds: _welcomeSkipper), () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (BuildContext context) => const BottomNavigationBarWidget()));
-    });
+    animation = Tween(
+      begin: -0.001388,
+      end: 0.08611,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.bounceIn));
+
+    // 自动跳转
+    if (!skipSplash) {
+      timer = Timer(Duration(seconds: _welcomeSkipper), () {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => const BottomNavigationBarWidget()));
+      });
+    }
+
   }
 
   @override
@@ -47,50 +83,29 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin{
     super.dispose();
   }
 
-  Future<void> _loadCounter() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      if (prefs.getInt('welcome_skipper') == null) {
-        prefs.setInt('welcome_skipper', 3);
-      }
-      _welcomeSkipper = prefs.getInt('welcome_skipper')!;
-
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final double ringSize = MediaQuery.of(context).size.width * 0.5;
+    // print(animation.value);
     return Material(
-      color: darkTheme.backgroundColor,
+      color: isDarkMode ? darkTheme.backgroundColor : lightTheme.backgroundColor,
       child: Center(
-        child: Stack(
-          children: <Widget> [
-            Center(
-              // child: CustomCircularProgressIndicator(size: ringSize,),
-              child: Transform.rotate(
-                angle: 135 * pi / 180,
-                child: SizedBox(
+        child: Container(
+          margin: EdgeInsets.only(bottom: ringSize/2),
+          child: AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) {
+              return Transform.rotate(
+                angle: animation.value * 2 * pi,
+                child: Image(
+                  image: AssetImage(isDarkMode ? logoName : logoDarkName),
                   width: ringSize,
                   height: ringSize,
-                  child: CircularProgressIndicator(
-                    value: controller.value,
-                    color: darkTheme.accentColor,
-                    strokeWidth: 20,
-                  ),
                 ),
-              )
-            ),
-            const Center(
-              child: Text("Ring",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 50.0,
-                    fontFamily: "TalkComic",
-                    fontWeight: FontWeight.bold)),
-            )
-          ],
-        ),
+              );
+            },
+          )
+        )
       )
 
     );
