@@ -61,10 +61,36 @@ class DBHelper {
     final List<Map> maps = await db.rawQuery('SELECT * FROM bills ORDER BY id DESC;');
 
     var data = List.generate(maps.length, (i) {
+      // debugPrint(maps[i].values.toString());
       return Node.fromMap(maps[i]);
     });
     debugPrint("[DBHepler] found ${data.length} data \n $data");
-    return List.from(data.reversed);
+    return List.from(data);
+  }
+
+  /// ===============================================
+  /// 获取数据
+  /// 要求 SELECT * FROM bills
+  /// ===============================================
+  Future<List<Node>> querySpec({int year = -1, int month = -1, int date = -1}) async {
+    String yearStr = year.toString().padLeft(4, '0');
+    String monthStr = month.toString().padLeft(2, '0');
+    String dateStr = date.toString().padLeft(2, '0');
+
+    final db = await initDatabase();
+    String raw = 'SELECT * FROM bills WHERE date LIKE "'
+        '${yearStr == "00-1" ? "%" : yearStr}-'
+        '${monthStr == "-1" ? "%" : monthStr}-'
+        '${dateStr == "-1" ? "%" : dateStr}T%" '
+        'ORDER BY date DESC;';
+    final List<Map> maps = await db.rawQuery(raw);
+    debugPrint('[DBHelper use QUERY: $raw');
+
+    var data = List.generate(maps.length, (i) {
+      return Node.fromMap(maps[i]);
+    });
+    debugPrint("[DBHepler] found ${data.length} data \n $data");
+    return List.from(data);
   }
 
   /// ===============================================
