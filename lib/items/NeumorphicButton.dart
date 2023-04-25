@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-// import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
-// import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
+// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
+import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NeumorphicButton extends StatefulWidget {
@@ -11,6 +11,9 @@ class NeumorphicButton extends StatefulWidget {
   final double height;
   final double width;
   final BorderRadius borderRadius;
+
+  final Color darkShadowColor;
+  final Color lightShadowColor;
   NeumorphicButton({
     Key? key,
     required this.value,
@@ -20,6 +23,8 @@ class NeumorphicButton extends StatefulWidget {
     this.height = 50,
     this.width = 100,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.darkShadowColor = const Color(0x3a282828),
+    this.lightShadowColor = const Color(0x3affffff),
   }) : super(key: key);
 
   @override
@@ -30,7 +35,6 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
 
   bool _value = true;
   late Widget _child;
-  late Color _buttonColor;
   late double _height;
   late double _width;
   late BorderRadius _borderRadius;
@@ -38,12 +42,14 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
   @override
   void initState() {
     super.initState();
+
     _value = widget.value;
     _child = widget.child;
-    _buttonColor = widget.buttonColor;
+
     _height = widget.height;
     _width = widget.width;
     _borderRadius = widget.borderRadius;
+
   }
 
   @override
@@ -65,36 +71,49 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
           widget.onChanged.call(_value);
         },
         child: AnimatedContainer(
-          child: Center(
-            child: _child,
-          ),
-
-          // 拟态特效
           duration: const Duration(milliseconds: 200),
           height: _height,
           width: _width,
           decoration: BoxDecoration(
             borderRadius: _borderRadius,
-            color: _buttonColor,
+            color: widget.buttonColor,
             boxShadow: _value
                 ?
-            null
+            [
+              BoxShadow(
+                color: widget.lightShadowColor,
+                offset: Offset(8, 8),
+                blurRadius: 8,
+                spreadRadius: 1,
+                inset: true,
+              ),
+              BoxShadow(
+                color: widget.darkShadowColor,
+                offset: Offset(-8, -8),
+                blurRadius: 8,
+                spreadRadius: 1,
+                inset: true,
+              ),
+            ]
                 :
             [
-              const BoxShadow(
-                color: Color(0xFFBEBEBE),
+              BoxShadow(
+                color: widget.darkShadowColor,
                 offset: Offset(8, 8),
-                blurRadius: 30,
-                spreadRadius: 1,
+                blurRadius: 8,
+                spreadRadius: 0,
               ),
-              const BoxShadow(
-                color: Colors.white,
-                offset: Offset(-8, -8),
-                blurRadius: 30,
-                spreadRadius: 1,
+              BoxShadow(
+                color: widget.lightShadowColor,
+                offset: Offset(-4, -4),
+                blurRadius: 4,
+                spreadRadius: 0,
               ),
             ]
 
+          ),
+          child: Center(
+            child: widget.child,
           ),
         ),
       ),

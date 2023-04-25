@@ -123,20 +123,23 @@ class _SettingsState extends State<Settings> {
 
           NeumorphicButton(
             value: exitApp,
+            buttonColor: isDarkMode ? darkTheme.backgroundColor : lightTheme.backgroundColor,
+            lightShadowColor: isDarkMode ? Color(0x0aF6F6F6) : Color(0x3affffff),
+            darkShadowColor: isDarkMode ? Color(0x3a000000) : Color(0x3a282828),
             child: Text(
                 useEN ? "EXIT" : "退出应用",
               style: TextStyle(
-                color: Colors.black
+                color: isDarkMode ? darkTheme.mainTextColor : lightTheme.mainTextColor
               ),
             ),
             // buttonColor: Colors.redAccent,
             onChanged: ((value) {
-              debugPrint("[SETTINGS] set reboot button to $value");
-              if (Platform.isAndroid) {
-                SystemNavigator.pop();
-              } else if (Platform.isIOS) {
-                exit(0);
-              }
+              // debugPrint("[SETTINGS] set reboot button to $value");
+              // if (Platform.isAndroid) {
+              //   SystemNavigator.pop();
+              // } else if (Platform.isIOS) {
+              //   exit(0);
+              // }
             }),
 
           ),

@@ -67,12 +67,10 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin{
     ).animate(CurvedAnimation(parent: controller, curve: Curves.bounceIn));
 
     // 自动跳转
-    if (!skipSplash) {
-      timer = Timer(Duration(seconds: _welcomeSkipper), () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => const BottomNavigationBarWidget()));
-      });
-    }
+    timer = Timer(Duration(seconds: skipSplash ? 0 : _welcomeSkipper), () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (BuildContext context) => const BottomNavigationBarWidget()));
+    });
 
   }
 

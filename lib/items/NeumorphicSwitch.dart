@@ -32,7 +32,6 @@ class NeumorphicSwitch extends StatefulWidget {
 
 class _NeumorphicSwitchState extends State<NeumorphicSwitch>
     with SingleTickerProviderStateMixin {
-  bool isDarkMode = true;
 
   late bool _value;
   late double centerPoint; //中心点
@@ -41,22 +40,10 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
   double _padding = 4;
   double _dragDistance = 0;
 
-  void getPrefsSettings() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool("isDarkMode") == null) {
-      prefs.setBool("isDarkMode", false);
-    }
-
-    setState(() {
-      isDarkMode = prefs.getBool("isDarkMode")!;
-
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    getPrefsSettings();
 
     centerPoint = widget.size / 2; //计算中心点
     _duration = widget.aniDuration;

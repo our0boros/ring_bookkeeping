@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ring_bookkeeping/data/init_database.dart';
+import 'package:ring_bookkeeping/items/dateEntryRow.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sqflite/sqflite.dart';
@@ -19,7 +20,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   // 数据表
-  late List<Node> _entryList;
   final DBHelper _dbHelper = DBHelper();
   // 时间
   late int year;
@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                       return ListView.builder(
                           reverse: true,
                           shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
+                          // physics: const ClampingScrollPhysics(),
                           itemCount: data.length,
                           itemBuilder: (BuildContext context, int index) {
                             debugPrint("[HOME] [FutureBuilder] [Listview] ===================[ ${index + 1} ]================");
@@ -115,23 +115,7 @@ class _HomePageState extends State<HomePage> {
                             // 如果当天存在一次交易
                             if (data[index].isNotEmpty) {
                               debugPrint(data[index].length.toString());
-                              return Container(
-                                width: screenWidth * 0.75,
-                                height: data[index].length * 50,
-                                child: Stack(
-                                  children: [
-                                    Text((index - 1).toString()),
-                                    ListView.builder(
-                                      physics: const ClampingScrollPhysics(),
-                                      itemCount: data[index].length,
-                                      itemBuilder: (BuildContext innerContext, int innerIndex) {
-                                        debugPrint("[HOME] [Listview] current date trade: ${data[index]}");
-                                        return Text(data[index][innerIndex].title);
-                                      },
-                                    ),
-                                  ],
-                                )
-                              );
+                              return dateEntryRow(entries: data[index], width: screenWidth * 0.85);
                             } else {
                               return Container();
                             }
